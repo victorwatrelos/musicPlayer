@@ -1,15 +1,12 @@
 package main
 
 import (
-	"./bdd"
-	"./crawl"
-	"fmt"
+	"./db"
 )
 
 func main() {
-	db := bdd.BddManager{}
+	db := db.DBManager{}
 	db.GetConnection()
-	data := crawl.Music{1212, 44100, 666, "NOFX", "PROUT", "SSSS", "My VV", "PATH"}
-	db.InsertData(&data)
+	db.Query("artist", "O")
 	db.Close()
 }
