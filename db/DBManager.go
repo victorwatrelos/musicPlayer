@@ -18,6 +18,13 @@ func (b *DBManager) GetConnection() {
 	b.musicCollection = session.DB("musique").C("track")
 }
 
+func (b *DBManager) ReadMusicChan(c chan crawl.Music) {
+	for music := range c {
+		b.InsertData(&music)
+	}
+	fmt.Println("Finishing insert music")
+}
+
 func (b *DBManager) InsertData(data *crawl.Music) {
 	err := b.musicCollection.Insert(data)
 	if err != nil {
