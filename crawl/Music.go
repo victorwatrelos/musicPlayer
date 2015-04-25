@@ -1,12 +1,11 @@
 package crawl
 
 type Music struct {
-	Duration int
-	SampRate int
-	NbChan   int
-	Artist   string
-	Album    string
-	Genre    string
-	Name     string
+	Duration string // Duration
+	NbChan   int    // Channel(s)
+	Artist   string // Album/Performer Performer
+	Album    string // Album
+	Genre    string // Genre
+	Name     string // Track Name
 	Path     string
 }
