@@ -2,6 +2,7 @@ package main
 
 import (
 	"./bdd"
+	"./crawl"
 	"fmt"
 )
 
@@ -9,7 +10,7 @@ func main() {
 	fmt.Println("HELLO")
 	db := bdd.BddManager{}
 	db.GetConnection()
-	data := bdd.MusicData{"NOFX"}
+	data := crawl.Music{1212, 44100, 666, "NOFX", "PROUT", "SSSS", "My VV", "PATH"}
 	db.InsertData(&data)
 	db.Close()
 }

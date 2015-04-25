@@ -1,6 +1,7 @@
 package bdd
 
 import (
+	"../crawl"
 	"fmt"
 	"gopkg.in/mgo.v2"
 )
@@ -16,7 +17,7 @@ func (b *BddManager) GetConnection() {
 	b.musicCollection = session.DB("musique").C("track")
 }
 
-func (b *BddManager) InsertData(data *MusicData) {
+func (b *BddManager) InsertData(data *crawl.Music) {
 	err := b.musicCollection.Insert(data)
 	if err != nil {
 		panic(err)
