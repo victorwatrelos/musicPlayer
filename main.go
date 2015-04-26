@@ -2,8 +2,7 @@ package main
 
 /*
 import (
-	"./crawl"
-	"./db"
+	"./player"
 	"flag"
 	"time"
 )
