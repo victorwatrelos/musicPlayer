@@ -1,5 +1,6 @@
 package main
 
+/*
 import (
 	"./crawl"
 	"./db"
@@ -9,15 +10,22 @@ import (
 
 func main() {
 	flag.Parse()
-	db := db.DBManager{}
-	db.GetConnection()
-	c := make(chan crawl.Music)
+	dtb := db.DBManager{}
+	dtb.GetConnection()
+	c := make(chan db.Music)
 	crawler := crawl.Crawler{c}
-	go db.ReadMusicChan(c)
+	go dtb.ReadMusicChan(c)
 	//	crawler.Go(".")
 	root := flag.Arg(0)
 	crawler.Go(root)
 	time.Sleep(10000)
 	//	db.Query("artist", "O")
-	db.Close()
+	dtb.Close()
+}
+
+*/
+import "./server"
+
+func main() {
+	server.Launch()
 }

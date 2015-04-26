@@ -1,4 +1,4 @@
-package crawl
+package db
 
 type Music struct {
 	Duration string // Duration

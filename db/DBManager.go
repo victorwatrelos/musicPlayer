@@ -1,7 +1,6 @@
 package db
 
 import (
-	"../crawl"
 	"fmt"
 	"gopkg.in/mgo.v2"
 	"gopkg.in/mgo.v2/bson"
@@ -18,27 +17,28 @@ func (b *DBManager) GetConnection() {
 	b.musicCollection = session.DB("musique").C("track")
 }
 
-func (b *DBManager) ReadMusicChan(c chan crawl.Music) {
+func (b *DBManager) ReadMusicChan(c chan Music) {
 	for music := range c {
 		b.InsertData(&music)
 	}
 	fmt.Println("Finishing insert music")
 }
 
-func (b *DBManager) InsertData(data *crawl.Music) {
+func (b *DBManager) InsertData(data *Music) {
 	err := b.musicCollection.Insert(data)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (b *DBManager) Query(label, data string) {
-	var results [](crawl.Music)
-	err := b.musicCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, ""}}}).All(&results)
+func (b *DBManager) Query(label, data string) []Music {
+	var results []Music
+	err := b.musicCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).All(&results)
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(results)
+	//	fmt.Println(results)
+	return results
 }
 
 func (b *DBManager) Close() {

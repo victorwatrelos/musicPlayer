@@ -1,6 +1,7 @@
 package crawl
 
 import (
+	"../db"
 	"fmt"
 	"log"
 	"os"
@@ -12,7 +13,7 @@ import (
 )
 
 type Crawler struct {
-	Channel chan Music
+	Channel chan db.Music
 }
 
 func (c *Crawler) isAudio(file string) bool {
@@ -24,11 +25,11 @@ func (c *Crawler) isAudio(file string) bool {
 }
 
 func (c *Crawler) sendInfo(path string, info string) {
-	mus := Music{"", 0, "", "Untitled", "Undefined", "", path}
+	mus := db.Music{"", 0, "", "Untitled", "Undefined", "", path}
 	a1 := strings.Split(info, "\n")
 	for _, v := range a1 {
 		a2 := strings.Split(v, " : ")
-		switch a2[0] {
+		switch strings.Trim(a2[0], " ") {
 		case "Duration":
 			mus.Duration = a2[1]
 		case "Channel(s)":
@@ -39,8 +40,10 @@ func (c *Crawler) sendInfo(path string, info string) {
 		case "Album/Performer":
 			mus.Artist = a2[1]
 		case "Album":
+			mus.Album = a2[1]
+		case "Genre":
 			mus.Genre = a2[1]
-		case "Track Name":
+		case "Track name":
 			mus.Name = a2[1]
 		}
 	}
@@ -50,7 +53,7 @@ func (c *Crawler) sendInfo(path string, info string) {
 
 func (c *Crawler) getInfo(path string, f os.FileInfo, err error) error {
 	if c.isAudio(path) {
-		out, err := exec.Command("mediainfo", "-f", path).Output()
+		out, err := exec.Command("mediainfo", path).Output()
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -61,6 +64,8 @@ func (c *Crawler) getInfo(path string, f os.FileInfo, err error) error {
 
 func (c *Crawler) Go(dir string) {
 	err := filepath.Walk(dir, c.getInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
 	close(c.Channel)
-	fmt.Printf("filepath.Walk() returned %v\n", err)
 }
