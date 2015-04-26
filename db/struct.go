@@ -1,10 +1,10 @@
-package bdd
+package db
 
 import (
 	"gopkg.in/mgo.v2"
 )
 
-type BddManager struct {
+type DBManager struct {
 	session         *mgo.Session
 	musicCollection *mgo.Collection
 }
