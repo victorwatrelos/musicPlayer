@@ -24,11 +24,9 @@ func main() {
 
 */
 import (
-	"./client"
 	"./server"
 )
 
 func main() {
-	//	server.Launch()
-	client.Launch()
+	server.Launch()
 }
