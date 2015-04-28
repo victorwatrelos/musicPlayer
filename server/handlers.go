@@ -79,8 +79,30 @@ func Pause(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func Add(w http.ResponseWriter, r *http.Request) {
+func Prev(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
+	p.Prev()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Pause", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func Next(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.Next()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Pause", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func AddHand(w http.ResponseWriter, r *http.Request, fn func(string)) {
+	//	p := player.GetSing()
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
@@ -91,13 +113,65 @@ func Add(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	p.Add(t.Path)
+	//	p.Add(t.Path)
+	fn(t.Path)
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	//	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Name + " by " + t.Artist + " To Playlist", Code: http.StatusOK}); err != nil {
 	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
 		panic(err)
 	}
+}
+
+func Add(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	AddHand(w, r, p.Add)
+}
+
+func AddToQueue(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	AddHand(w, r, p.AddToQueue)
+}
+
+func AddArtistHand(w http.ResponseWriter, r *http.Request, fn func(string)) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	var t choose_ret
+	if err = json.Unmarshal(body, &t); err != nil {
+		panic(err)
+	}
+
+	dtb := db.DBManager{}
+	dtb.GetConnection()
+	defer dtb.Close()
+	var results []db.Music
+
+	results = dtb.Query("artist", t.Path)
+
+	for _, mus := range results {
+		fn(mus.Path)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	//	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Name + " by " + t.Artist + " To Playlist", Code: http.StatusOK}); err != nil {
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func AddArtist(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.ClearQueue()
+	AddArtistHand(w, r, p.AddToQueue)
+	p.Play()
+}
+
+func AddArtistToQueue(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	AddArtistHand(w, r, p.AddToQueue)
 }
 
 func ChVolume(w http.ResponseWriter, r *http.Request) {
@@ -118,4 +192,9 @@ func ChVolume(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Volume changed to " + strconv.Itoa(t.Volume), Code: http.StatusOK}); err != nil {
 		panic(err)
 	}
+}
+
+func ClearQueue(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.ClearQueue()
 }

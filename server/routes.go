@@ -19,7 +19,7 @@ var routes = Routes{
 		Index,
 	},
 	Route{
-		"Show Artist",
+		"Show Artists",
 		"GET",
 		"/artist",
 		GetArtist,
@@ -27,7 +27,7 @@ var routes = Routes{
 	Route{
 		"Show Album",
 		"GET",
-		"/artist/album",
+		"/album",
 		GetAlbum,
 	},
 	Route{
@@ -49,10 +49,46 @@ var routes = Routes{
 		Pause,
 	},
 	Route{
+		"Prev",
+		"PUT",
+		"/prev",
+		Next,
+	},
+	Route{
+		"Next",
+		"PUT",
+		"/next",
+		Prev,
+	},
+	Route{
 		"Add Track To Playlist",
 		"PUT",
 		"/add",
 		Add,
+	},
+	Route{
+		"Add Artist To Playlist",
+		"PUT",
+		"/add/Artist",
+		AddArtist,
+	},
+	Route{
+		"Queue Track To Playlist",
+		"PUT",
+		"/queue",
+		AddToQueue,
+	},
+	Route{
+		"Queue Artist To Playlist",
+		"PUT",
+		"/queue/Artist",
+		AddArtistToQueue,
+	},
+	Route{
+		"Clear Playlist Queue",
+		"PUT",
+		"/clearQueue",
+		ClearQueue,
 	},
 	Route{
 		"Change Volume",

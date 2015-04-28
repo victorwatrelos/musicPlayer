@@ -43,6 +43,10 @@ func (p *Player) AddToQueue(filename string) {
 	p.vlc.AddToQueue(filename)
 }
 
+func (p *Player) ClearQueue() {
+	p.vlc.ClearQueue()
+}
+
 func (p *Player) Close() {
 	p.vlc.Close()
 }
