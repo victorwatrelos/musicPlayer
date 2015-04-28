@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+        <title>Titre de la page</title>
+        <link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container-fluid">
+            <div class="row">
+                <h1 class="col-md-offset-1">Search artist</h1>
+            </div>
+            <div class="row">
+                <div class="col-md-offset-1 col-md-2">
+                    <div class="form-group">
+                        <label>Artiste</label>
+                        <input id="searchByArtist" type="text">
+                    </div>
+                    <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-default"  id="launchSearch">Search</span>
+                        <button type="button" class="btn btn-default"  id="addToQueue">Add to queue</span>
+                    </div>
+                </div>
+                <div class="col-md-1">
+                    <button class="btn btn-primary emptyPlaylist">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true" ></span>
+                    </button>
+                    <button class="btn btn-primary playMusic">
+                        <span class="glyphicon glyphicon-play" aria-hidden="true" ></span>
+                    </button>
+                    <button class="btn btn-primary pauseMusic">
+                        <span class="glyphicon glyphicon-pause" aria-hidden="true" ></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-1">
+                    <br />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-12 col-md-4 col-md-offset-1 list-group">
+                    <div class="list-group" id="resultDisplay">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="pageScript.js"></script>
+    </body>
+</html>

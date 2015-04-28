@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
+	"./server"
 )
 
 func main() {
-	fmt.Println("HELLO WORLD")
+	server.Launch()
 }
