@@ -67,7 +67,7 @@ func (v *VlcControl) AddToQueue(filename string) {
 }
 
 func (v *VlcControl) ClearQueue() {
-	v.runCmd("clear")
+	v.RunCmd("clear")
 }
 
 func (v *VlcControl) Close() {
