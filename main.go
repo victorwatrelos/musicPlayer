@@ -23,8 +23,12 @@ func main() {
 }
 
 */
-import "./server"
+import (
+	"./client"
+	"./server"
+)
 
 func main() {
-	server.Launch()
+	//	server.Launch()
+	client.Launch()
 }

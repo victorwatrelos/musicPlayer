@@ -32,11 +32,19 @@ func (p *Player) RunCmd(cmd string) {
 }
 
 func (p *Player) Pause() {
-	p.RunCommand("pause\n")
+	p.RunCmd("pause\n")
 }
 
 func (p *Player) Play() {
-	p.RunCommand("play\n")
+	p.RunCmd("play\n")
+}
+
+func (p *Player) Prev() {
+	p.RunCmd("prev\n")
+}
+
+func (p *Player) Next() {
+	p.RunCmd("next\n")
 }
 
 func (p *Player) SetVolume(vol int) {
@@ -52,6 +60,10 @@ func (p *Player) Add(filename string) {
 	p.RunCmd("add " + filename + "\n")
 }
 
+func (p *Player) AddToQueue(filename string) {
+	p.RunCmd("enqueue " + filename + "\n")
+}
+
 func (p *Player) Close() {
 	println("Close")
 	p.input.Close()
@@ -61,4 +73,14 @@ func chk(err error) {
 	if err != nil {
 		panic(err)
 	}
+}
+
+var singleton *Player = nil
+
+func GetSing() *Player {
+	if singleton == nil {
+		singleton = &Player{}
+		singleton.Init()
+	}
+	return singleton
 }

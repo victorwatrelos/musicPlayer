@@ -2,10 +2,23 @@ package server
 
 import (
 	"../db"
+	"../player"
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
+	"io/ioutil"
+	_"log"
 )
+
+type jsonRet struct {
+	Message		string	`json:"message"`
+	Code		int		`json:"code"`
+}
+
+type vol_ret struct {
+	Volume 		int		`json:"volume"`
+}
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome!")
@@ -41,23 +54,63 @@ func GetArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func Play(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.Play()
 
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Play", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
 }
 
 func Pause(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.Pause()
 
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Pause", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
 }
 
 func Add(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query().Get("q")
-	if len(q) != 0 {
+	p := player.GetSing()
 
+	body, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+        panic(err)
+    }
+    var t db.Music
+    if err = json.Unmarshal(body, &t) ; err != nil {
+        panic(err)
+    }
+
+	p.Add(t.Path)
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Name + " by " + t.Artist + " To Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
 	}
 }
 
 func ChVolume(w http.ResponseWriter, r *http.Request) {
-	q := r.URL.Query().Get("q")
-	if len(q) != 0 {
+	p := player.GetSing()
 
+	body, err := ioutil.ReadAll(r.Body)
+    if err != nil {
+        panic(err)
+    }
+    var t vol_ret
+    if err = json.Unmarshal(body, &t) ; err != nil {
+        panic(err)
+    }
+    p.SetVolume(t.Volume)
+
+    w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Volume changed to " + strconv.Itoa(t.Volume), Code: http.StatusOK}); err != nil {
+		panic(err)
 	}
 }
