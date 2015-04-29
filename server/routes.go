@@ -37,6 +37,18 @@ var routes = Routes{
 		GetGenre,
 	},
 	Route{
+		"Show Playlist",
+		"GET",
+		"/playlist",
+		ShowPlaylist,
+	},
+	Route{
+		"Show Status",
+		"GET",
+		"/status",
+		ShowStatus,
+	},
+	Route{
 		"Play",
 		"PUT",
 		"/play",
@@ -52,13 +64,19 @@ var routes = Routes{
 		"Prev",
 		"PUT",
 		"/prev",
-		Next,
+		Prev,
 	},
 	Route{
 		"Next",
 		"PUT",
 		"/next",
-		Prev,
+		Next,
+	},
+	Route{
+		"Change Volume",
+		"PUT",
+		"/vol",
+		ChVolume,
 	},
 	Route{
 		"Add Track To Playlist",
@@ -69,7 +87,7 @@ var routes = Routes{
 	Route{
 		"Add Artist To Playlist",
 		"PUT",
-		"/add/Artist",
+		"/add/artist",
 		AddArtist,
 	},
 	Route{
@@ -81,19 +99,37 @@ var routes = Routes{
 	Route{
 		"Queue Artist To Playlist",
 		"PUT",
-		"/queue/Artist",
+		"/queue/artist",
 		AddArtistToQueue,
 	},
 	Route{
 		"Clear Playlist Queue",
 		"PUT",
-		"/clearQueue",
+		"/clear",
 		ClearQueue,
 	},
 	Route{
-		"Change Volume",
+		"GoTo Playlist's index",
 		"PUT",
-		"/vol",
-		ChVolume,
+		"/goto",
+		Goto,
+	},
+	Route{
+		"ToggleLoop",
+		"PUT",
+		"/loop",
+		SetLoop,
+	},
+	Route{
+		"ToggleRandom",
+		"PUT",
+		"/random",
+		SetRandom,
+	},
+	Route{
+		"ToggleRepeat",
+		"PUT",
+		"/repeat",
+		SetRepeat,
 	},
 }

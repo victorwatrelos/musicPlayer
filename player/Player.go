@@ -2,7 +2,6 @@ package player
 
 import (
 	"../vlcControl"
-	"fmt"
 )
 
 type Player struct {
@@ -10,9 +9,7 @@ type Player struct {
 }
 
 func (p *Player) Init() {
-	fmt.Println("Player Init start")
 	p.vlc.Init()
-	fmt.Println("Player Init end")
 }
 
 func (p *Player) Pause() {
@@ -49,6 +46,30 @@ func (p *Player) ClearQueue() {
 
 func (p *Player) Close() {
 	p.vlc.Close()
+}
+
+func (p *Player) ShowPlaylist() string {
+	return p.vlc.ShowPlaylist()
+}
+
+func (p *Player) ShowStatus() string {
+	return p.vlc.ShowStatus()
+}
+
+func (p *Player) Goto(index string) {
+	p.vlc.Goto(index)
+}
+
+func (p *Player) SetLoop(act bool) {
+	p.vlc.SetLoop(act)
+}
+
+func (p *Player) SetRandom(act bool) {
+	p.vlc.SetRandom(act)
+}
+
+func (p *Player) SetRepeat(act bool) {
+	p.vlc.SetRepeat(act)
 }
 
 func chk(err error) {

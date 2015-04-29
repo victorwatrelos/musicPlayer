@@ -1,11 +1,9 @@
 package server
 
 import (
-	"../db"
 	"../player"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	_ "log"
 	"net/http"
 	"strconv"
@@ -16,46 +14,148 @@ type jsonRet struct {
 	Code    int    `json:"code"`
 }
 
-type vol_ret struct {
-	Volume int `json:"volume"`
-}
-
-type choose_ret struct {
-	Path string `json:"path"`
-}
+//	HANDLERS
 
 func Index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome!")
 }
 
-func GetData(label string, w http.ResponseWriter, r *http.Request) {
-	dtb := db.DBManager{}
-	dtb.GetConnection()
-	defer dtb.Close()
-	var results []db.Music
+//	DATABASE GETTER HANDLERS
 
+func GetGenre(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
-	results = dtb.Query(label, q)
+	results := GetData("genre", q)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(results); err != nil {
 		panic(err)
 	}
-
-}
-
-func GetGenre(w http.ResponseWriter, r *http.Request) {
-	GetData("genre", w, r)
 }
 
 func GetAlbum(w http.ResponseWriter, r *http.Request) {
-	GetData("album", w, r)
+	q := r.URL.Query().Get("q")
+	results := GetData("album", q)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		panic(err)
+	}
 }
 
 func GetArtist(w http.ResponseWriter, r *http.Request) {
-	GetData("artist", w, r)
+	q := r.URL.Query().Get("q")
+	results := GetData("artist", q)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		panic(err)
+	}
 }
+
+//	PLAYER INFO HANDLERS
+
+func ShowPlaylist(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	ret := p.ShowPlaylist()
+	fmt.Println(ret)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Show Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func ShowStatus(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	ret := p.ShowStatus()
+	fmt.Println(ret)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Show Status", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func Goto(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	p.Goto(t.Path)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Show Status", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+//	PLAYER OPTION HANDLERS
+
+func SetLoop(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	if t.Path == "0" {
+		p.SetLoop(false)
+	} else {
+		p.SetLoop(true)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Toggle Loop", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func SetRandom(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	if t.Path == "0" {
+		p.SetRandom(false)
+	} else {
+		p.SetRandom(true)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Toggle Random", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func SetRepeat(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	if t.Path == "0" {
+		p.SetRepeat(false)
+	} else {
+		p.SetRepeat(true)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Toggle Repeat", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+//	PLAYER CONTROL HANDLERS
 
 func Play(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
@@ -85,7 +185,7 @@ func Prev(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Pause", Code: http.StatusOK}); err != nil {
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Prev", Code: http.StatusOK}); err != nil {
 		panic(err)
 	}
 }
@@ -96,93 +196,15 @@ func Next(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Pause", Code: http.StatusOK}); err != nil {
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Next", Code: http.StatusOK}); err != nil {
 		panic(err)
 	}
-}
-
-func AddHand(w http.ResponseWriter, r *http.Request, fn func(string)) {
-	//	p := player.GetSing()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err)
-	}
-	var t choose_ret
-	if err = json.Unmarshal(body, &t); err != nil {
-		panic(err)
-	}
-
-	//	p.Add(t.Path)
-	fn(t.Path)
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	//	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Name + " by " + t.Artist + " To Playlist", Code: http.StatusOK}); err != nil {
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
-		panic(err)
-	}
-}
-
-func Add(w http.ResponseWriter, r *http.Request) {
-	p := player.GetSing()
-	AddHand(w, r, p.Add)
-}
-
-func AddToQueue(w http.ResponseWriter, r *http.Request) {
-	p := player.GetSing()
-	AddHand(w, r, p.AddToQueue)
-}
-
-func AddArtistHand(w http.ResponseWriter, r *http.Request, fn func(string)) {
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err)
-	}
-	var t choose_ret
-	if err = json.Unmarshal(body, &t); err != nil {
-		panic(err)
-	}
-
-	dtb := db.DBManager{}
-	dtb.GetConnection()
-	defer dtb.Close()
-	var results []db.Music
-
-	results = dtb.Query("artist", t.Path)
-
-	for _, mus := range results {
-		fn(mus.Path)
-	}
-
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	//	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Name + " by " + t.Artist + " To Playlist", Code: http.StatusOK}); err != nil {
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
-		panic(err)
-	}
-}
-
-func AddArtist(w http.ResponseWriter, r *http.Request) {
-	p := player.GetSing()
-	p.ClearQueue()
-	AddArtistHand(w, r, p.AddToQueue)
-	p.Play()
-}
-
-func AddArtistToQueue(w http.ResponseWriter, r *http.Request) {
-	p := player.GetSing()
-	AddArtistHand(w, r, p.AddToQueue)
 }
 
 func ChVolume(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
-
-	body, err := ioutil.ReadAll(r.Body)
-	if err != nil {
-		panic(err)
-	}
 	var t vol_ret
-	if err = json.Unmarshal(body, &t); err != nil {
+	if err := GetBody(r, &t); err != nil {
 		panic(err)
 	}
 	p.SetVolume(t.Volume)
@@ -194,7 +216,69 @@ func ChVolume(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+//	PLAYER'S PLAYLIST CONTROL HANDLERS
+
+func Add(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	p.Add(t.Path)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func AddToQueue(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	var t choose_ret
+	if err := GetBody(r, &t); err != nil {
+		panic(err)
+	}
+	p.AddToQueue(t.Path)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist's Queue", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func AddArtist(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	p.ClearQueue()
+	str := MapQuery(r, "artist", p.AddToQueue)
+	p.Play()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Artist " + str + " To Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
+func AddArtistToQueue(w http.ResponseWriter, r *http.Request) {
+	p := player.GetSing()
+	str := MapQuery(r, "artist", p.AddToQueue)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Artist " + str + " To Playlist", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
+}
+
 func ClearQueue(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
 	p.ClearQueue()
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Queue Cleared", Code: http.StatusOK}); err != nil {
+		panic(err)
+	}
 }

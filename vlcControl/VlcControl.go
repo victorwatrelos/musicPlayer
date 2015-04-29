@@ -26,18 +26,30 @@ func (v *VlcControl) Init() {
 	time.Sleep(100)
 }
 
-func (v *VlcControl) RunCmd(cmd string) {
-	println("Cmd: ", cmd)
+func (v *VlcControl) RunCmd(cmd string) string {
 	_, err := v.input.Write([]byte(cmd))
 	chk(err)
-}
-
-func (v *VlcControl) Pause() {
-	v.RunCmd("pause\n")
+	var result string
+	ret := make([]byte, 1024)
+	i := 1024
+	for i == 1024 {
+		i, err = v.output.Read(ret)
+		result += string(ret)
+	}
+	chk(err)
+	return result
 }
 
 func (v *VlcControl) Play() {
 	v.RunCmd("play\n")
+}
+
+func (v *VlcControl) Stop() {
+	v.RunCmd("stop\n")
+}
+
+func (v *VlcControl) Pause() {
+	v.RunCmd("pause\n")
 }
 
 func (v *VlcControl) Prev() {
@@ -67,12 +79,56 @@ func (v *VlcControl) AddToQueue(filename string) {
 }
 
 func (v *VlcControl) ClearQueue() {
-	v.RunCmd("clear")
+	v.RunCmd("clear\n")
+}
+
+func (v *VlcControl) SetLoop(activation bool) {
+	var mode string
+	if activation {
+		mode = "on"
+	} else {
+		mode = "off"
+	}
+	v.RunCmd("loop " + mode + "\n")
+}
+
+func (v *VlcControl) SetRandom(activation bool) {
+	var mode string
+	if activation {
+		mode = "on"
+	} else {
+		mode = "off"
+	}
+	v.RunCmd("random " + mode + "\n")
+}
+
+func (v *VlcControl) SetRepeat(activation bool) {
+	var mode string
+	if activation {
+		mode = "on"
+	} else {
+		mode = "off"
+	}
+	v.RunCmd("repeat " + mode + "\n")
+}
+
+func (v *VlcControl) Goto(index string) {
+	v.RunCmd("goto " + index + "\n")
+}
+
+func (v *VlcControl) ShowPlaylist() string {
+	ret := v.RunCmd("playlist\n")
+	return ret
+}
+
+func (v *VlcControl) ShowStatus() string {
+	ret := v.RunCmd("status\n")
+	return ret
 }
 
 func (v *VlcControl) Close() {
 	println("VLC shutdown")
-	v.RunCmd("shutdown")
+	v.RunCmd("shutdown\n")
 	v.input.Close()
 }
 
