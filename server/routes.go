@@ -118,18 +118,18 @@ var routes = Routes{
 		"ToggleLoop",
 		"PUT",
 		"/loop",
-		SetLoop,
+		ToggleLoop,
 	},
 	Route{
 		"ToggleRandom",
 		"PUT",
 		"/random",
-		SetRandom,
+		ToggleRandom,
 	},
 	Route{
 		"ToggleRepeat",
 		"PUT",
 		"/repeat",
-		SetRepeat,
+		ToggleRepeat,
 	},
 }

@@ -34,9 +34,9 @@ func (v *VlcControl) RunCmd(cmd string) string {
 	i := 1024
 	for i == 1024 {
 		i, err = v.output.Read(ret)
+		chk(err)
 		result += string(ret)
 	}
-	chk(err)
 	return result
 }
 

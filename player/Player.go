@@ -5,11 +5,23 @@ import (
 )
 
 type Player struct {
-	vlc vlcControl.VlcControl
+	vlc    vlcControl.VlcControl
+	loop   bool
+	repeat bool
+	random bool
+	volume int
 }
 
 func (p *Player) Init() {
 	p.vlc.Init()
+	p.loop = false
+	p.repeat = false
+	p.random = false
+	p.volume = 300
+	p.vlc.SetLoop(p.loop)
+	p.vlc.SetRepeat(p.repeat)
+	p.vlc.SetRandom(p.random)
+	p.vlc.SetVolume(p.volume)
 }
 
 func (p *Player) Pause() {
@@ -29,7 +41,8 @@ func (p *Player) Next() {
 }
 
 func (p *Player) SetVolume(vol int) {
-	p.vlc.SetVolume(vol)
+	p.volume = vol
+	p.vlc.SetVolume(p.volume)
 }
 
 func (p *Player) Add(filename string) {
@@ -60,17 +73,36 @@ func (p *Player) Goto(index string) {
 	p.vlc.Goto(index)
 }
 
-func (p *Player) SetLoop(act bool) {
-	p.vlc.SetLoop(act)
+func (p *Player) ToggleLoop() {
+	if p.loop {
+		p.loop = false
+	} else {
+		p.loop = true
+	}
+	p.vlc.SetLoop(p.loop)
 }
 
-func (p *Player) SetRandom(act bool) {
-	p.vlc.SetRandom(act)
+func (p *Player) ToggleRepeat() {
+	if p.repeat {
+		p.repeat = false
+	} else {
+		p.repeat = true
+	}
+	p.vlc.SetRepeat(p.repeat)
 }
 
-func (p *Player) SetRepeat(act bool) {
-	p.vlc.SetRepeat(act)
+func (p *Player) ToggleRandom() {
+	if p.random {
+		p.random = false
+	} else {
+		p.random = true
+	}
+	p.vlc.SetRandom(p.random)
 }
+
+func (p *Player) GetLoop() bool   { return p.loop }
+func (p *Player) GetRepeat() bool { return p.repeat }
+func (p *Player) GetRandom() bool { return p.random }
 
 func chk(err error) {
 	if err != nil {

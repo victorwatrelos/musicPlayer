@@ -98,16 +98,16 @@ func Goto(w http.ResponseWriter, r *http.Request) {
 
 //	PLAYER OPTION HANDLERS
 
-func SetLoop(w http.ResponseWriter, r *http.Request) {
+func ToggleLoop(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
 	var t choose_ret
 	if err := GetBody(r, &t); err != nil {
 		panic(err)
 	}
 	if t.Path == "0" {
-		p.SetLoop(false)
+		p.ToggleLoop()
 	} else {
-		p.SetLoop(true)
+		p.ToggleLoop()
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -117,16 +117,16 @@ func SetLoop(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SetRandom(w http.ResponseWriter, r *http.Request) {
+func ToggleRandom(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
 	var t choose_ret
 	if err := GetBody(r, &t); err != nil {
 		panic(err)
 	}
 	if t.Path == "0" {
-		p.SetRandom(false)
+		p.ToggleRandom()
 	} else {
-		p.SetRandom(true)
+		p.ToggleRandom()
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
@@ -136,16 +136,16 @@ func SetRandom(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SetRepeat(w http.ResponseWriter, r *http.Request) {
+func ToggleRepeat(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
 	var t choose_ret
 	if err := GetBody(r, &t); err != nil {
 		panic(err)
 	}
 	if t.Path == "0" {
-		p.SetRepeat(false)
+		p.ToggleRepeat()
 	} else {
-		p.SetRepeat(true)
+		p.ToggleRepeat()
 	}
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
