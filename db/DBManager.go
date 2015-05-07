@@ -41,6 +41,15 @@ func (b *DBManager) Query(label, data string) []Music {
 	return results
 }
 
+func (b *DBManager) DistinctQ(label, key, data, sort string) []string {
+	var results []string
+	err := b.musicCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).Sort(sort).Distinct(key, &results)
+	if err != nil {
+		panic(err)
+	}
+	return results
+}
+
 func (b *DBManager) Close() {
 	fmt.Println("Close Mongodb session")
 	b.session.Close()

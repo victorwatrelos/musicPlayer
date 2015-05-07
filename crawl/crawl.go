@@ -18,23 +18,21 @@ type Crawler struct {
 
 func (c *Crawler) isAudio(file string) bool {
 	ext := path.Ext(file)
-	if ext != ".mp3" && ext != ".m4a" && ext != ".flac" {
+	if ext != ".mp3" && ext != ".m4a" && ext != ".flac" && ext != ".wav" {
 		return false
 	}
 	return true
 }
 
 func (c *Crawler) sendInfo(path string, info string) {
-	mus := db.Music{"", 0, "", "Untitled", "Undefined", "", path}
+	mus := db.Music{"", "", "Untitled", "Undefined", "", path}
 	a1 := strings.Split(info, "\n")
+
 	for _, v := range a1 {
 		a2 := strings.Split(v, " : ")
 		switch strings.Trim(a2[0], " ") {
 		case "Duration":
 			mus.Duration = a2[1]
-		case "Channel(s)":
-			//			mus.NbChan, _ = strconv.ParseInt(a2[1], 10, strconv.IntSize)
-			mus.NbChan = 2
 		case "Performer":
 			mus.Artist = a2[1]
 		case "Album/Performer":
@@ -47,23 +45,33 @@ func (c *Crawler) sendInfo(path string, info string) {
 			mus.Name = a2[1]
 		}
 	}
+	//	fmt.Println(mus)
 	c.Channel <- mus
-	fmt.Println(mus)
 }
 
 func (c *Crawler) getInfo(path string, f os.FileInfo, err error) error {
+	fmt.Println(path)
 	if c.isAudio(path) {
 		out, err := exec.Command("mediainfo", path).Output()
 		if err != nil {
-			log.Fatal(err)
+			fmt.Fprintf(os.Stderr, path, "\n")
+			return nil
 		}
 		c.sendInfo(path, string(out))
 	}
 	return nil
 }
 
+/*
+func PU(path string, f os.FileInfo, err error) error {
+	fmt.Println(path)
+	i++
+	return nil
+}
+*/
 func (c *Crawler) Go(dir string) {
 	err := filepath.Walk(dir, c.getInfo)
+	//err := filepath.Walk(dir, PU)
 	if err != nil {
 		log.Fatal(err)
 	}

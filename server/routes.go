@@ -37,6 +37,12 @@ var routes = Routes{
 		GetGenre,
 	},
 	Route{
+		"Show Tracks",
+		"GET",
+		"/tracks",
+		GetTracks,
+	},
+	Route{
 		"Show Playlist",
 		"GET",
 		"/playlist",

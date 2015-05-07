@@ -24,7 +24,7 @@ func Index(w http.ResponseWriter, r *http.Request) {
 
 func GetGenre(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
-	results := GetData("genre", q)
+	results := GetDataDistinct("genre", q)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -35,7 +35,7 @@ func GetGenre(w http.ResponseWriter, r *http.Request) {
 
 func GetAlbum(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
-	results := GetData("album", q)
+	results := GetDataDistinct("album", q)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -46,7 +46,19 @@ func GetAlbum(w http.ResponseWriter, r *http.Request) {
 
 func GetArtist(w http.ResponseWriter, r *http.Request) {
 	q := r.URL.Query().Get("q")
-	results := GetData("artist", q)
+	results := GetDataDistinct("artist", q)
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	if err := json.NewEncoder(w).Encode(results); err != nil {
+		panic(err)
+	}
+}
+
+func GetTracks(w http.ResponseWriter, r *http.Request) {
+	q := r.URL.Query().Get("q")
+	label := r.URL.Query().Get("label")
+	results := GetData(label, q)
 
 	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
