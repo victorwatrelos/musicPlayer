@@ -12,7 +12,7 @@ func main() {
 	fl := flag.Arg(0)
 	dtb := db.DBManager{}
 	dtb.GetConnection()
-	c := make(chan db.Music)
+	c := make(chan db.Track)
 	crawler := crawl.Crawler{c}
 	go dtb.ReadMusicChan(c)
 	//	crawler.Go("/Users/josephrenouf/Music/iTunes/iTunes Media/Music")

@@ -14,56 +14,26 @@ func (b *DBManager) GetConnection() {
 	}
 	session.SetMode(mgo.Monotonic, true)
 	b.session = session
-	b.musicCollection = session.DB("musique").C("track")
-	b.artistCollection = session.DB("musique").C("artist")
+	b.trackCollection = session.DB("music").C("track")
 }
 
-func (b *DBManager) formatData(music *Music) {
-}
-
-func (b *DBManager) ReadMusicChan(c chan Music) {
-	for music := range c {
-		b.formatData(&music)
-		b.InsertData(&music)
+func (b *DBManager) ReadMusicChan(c chan Track) {
+	for track := range c {
+		b.InsertData(&track)
 	}
 	fmt.Println("Finishing insert music")
 }
 
-func (b *DBManager) InsertData(music *Track, artist *Artist) {
-	var artist Artist
-	artist = b.SaveArtist(artist)
-	err := b.musicCollection.Insert(music)
+func (b *DBManager) InsertData(track *Track) {
+	err := b.trackCollection.Insert(track)
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (b *DBManager) createArtist(artist *Artist) *Artist {
-	i := bson.NewObjectId()
-	err := b.artistCollection.Insert(bson.M{"_id": i, "name": artist.Name})
-	if err != nil {
-		panic(err)
-	}
-	artist.Id = i
-	return artist
-}
-
-func (b *DBManager) SaveArtist(artistOrig *Artist) *Artist {
-	var artist Artist
-	err := b.artistCollection.Find(bson.M{"name": name}).One(&artist)
-	if err != nil {
-		if err.Error() == "not found" {
-			artist = b.createArtist(&artistOrig)
-		} else {
-			panic(err)
-		}
-	}
-	return &artist
-}
-
-func (b *DBManager) Query(label, data string) []Music {
-	var results []Music
-	err := b.musicCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).All(&results)
+func (b *DBManager) Query(label, data string) []Track {
+	var results []Track
+	err := b.trackCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).All(&results)
 	if err != nil {
 		panic(err)
 	}
@@ -72,7 +42,7 @@ func (b *DBManager) Query(label, data string) []Music {
 
 func (b *DBManager) DistinctQ(label, key, data, sort string) []string {
 	var results []string
-	err := b.musicCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).Sort(sort).Distinct(key, &results)
+	err := b.trackCollection.Find(bson.M{label: bson.M{"$regex": bson.RegEx{`.*` + data + `.*`, "i"}}}).Sort(sort).Distinct(key, &results)
 	if err != nil {
 		panic(err)
 	}

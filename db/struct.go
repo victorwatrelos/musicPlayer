@@ -5,9 +5,8 @@ import (
 )
 
 type DBManager struct {
-	session          *mgo.Session
-	musicCollection  *mgo.Collection
-	artistCollection *mgo.Collection
+	session         *mgo.Session
+	trackCollection *mgo.Collection
 }
 
 type MusicData struct {
