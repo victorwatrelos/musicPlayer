@@ -19,7 +19,15 @@ func (b *DBManager) GetConnection() {
 
 func (b *DBManager) ReadMusicChan(c chan Track) {
 	for track := range c {
-		b.InsertData(&track)
+		info, err := b.trackCollection.Upsert(bson.M{"artist": track.Artist, "album": track.Album, "name": track.Name}, track)
+		if err != nil {
+			panic(err)
+		}
+		if info.UpsertedId == nil {
+			fmt.Println("Update: ", track)
+			continue
+		}
+		fmt.Println("New: ", track)
 	}
 	fmt.Println("Finishing insert music")
 }

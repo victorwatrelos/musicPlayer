@@ -49,7 +49,6 @@ func (c *Crawler) sendInfo(path string, info string) {
 }
 
 func (c *Crawler) getInfo(path string, f os.FileInfo, err error) error {
-	fmt.Println(path)
 	if c.isAudio(path) {
 		out, err := exec.Command("mediainfo", path).Output()
 		if err != nil {
@@ -61,16 +60,8 @@ func (c *Crawler) getInfo(path string, f os.FileInfo, err error) error {
 	return nil
 }
 
-/*
-func PU(path string, f os.FileInfo, err error) error {
-	fmt.Println(path)
-	i++
-	return nil
-}
-*/
 func (c *Crawler) Go(dir string) {
 	err := filepath.Walk(dir, c.getInfo)
-	//err := filepath.Walk(dir, PU)
 	if err != nil {
 		log.Fatal(err)
 	}
