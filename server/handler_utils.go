@@ -41,7 +41,7 @@ func GetBody(r *http.Request, v Entity) error {
 	return v.UnmarshalHTTP(r)
 }
 
-func GetData(label, query string) []db.Music {
+func GetData(label, query string) []db.Track {
 	dtb := db.DBManager{}
 	dtb.GetConnection()
 	defer dtb.Close()

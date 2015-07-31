@@ -1,6 +1,7 @@
 package server
 
 import (
+	"../db"
 	"../player"
 	"encoding/json"
 	"fmt"
@@ -228,38 +229,48 @@ func ChVolume(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//	PLAYER'S PLAYLIST CONTROL HANDLERS
-
 func Add(w http.ResponseWriter, r *http.Request) {
-	p := player.GetSing()
-	var t choose_ret
-	if err := GetBody(r, &t); err != nil {
-		panic(err)
-	}
-	p.Add(t.Path)
+	var body JsonTracks
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist", Code: http.StatusOK}); err != nil {
+	p := player.GetSing()
+	if err := GetBody(r, &body); err != nil {
 		panic(err)
 	}
+
+	dtb := db.DBManager{}
+	dtb.GetConnection()
+	defer dtb.Close()
+	results := dtb.FindByIds(body.Tracks)
+	first := true
+	for _, track := range results {
+		if first {
+			p.Add(track.Path)
+			first = false
+			continue
+		}
+		p.AddToQueue(track.Path)
+	}
+	p.Play()
 }
 
 func AddToQueue(w http.ResponseWriter, r *http.Request) {
+	var body JsonTracks
+
 	p := player.GetSing()
-	var t choose_ret
-	if err := GetBody(r, &t); err != nil {
+	if err := GetBody(r, &body); err != nil {
 		panic(err)
 	}
-	p.AddToQueue(t.Path)
 
-	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(jsonRet{Message: "Added Track " + t.Path + " To Playlist's Queue", Code: http.StatusOK}); err != nil {
-		panic(err)
+	dtb := db.DBManager{}
+	dtb.GetConnection()
+	defer dtb.Close()
+	results := dtb.FindByIds(body.Tracks)
+	for _, track := range results {
+		p.AddToQueue(track.Path)
 	}
 }
 
+//	PLAYER'S PLAYLIST CONTROL HANDLERS
 func AddArtist(w http.ResponseWriter, r *http.Request) {
 	p := player.GetSing()
 	p.ClearQueue()

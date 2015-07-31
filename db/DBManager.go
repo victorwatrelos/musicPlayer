@@ -24,6 +24,18 @@ func (b *DBManager) ReadMusicChan(c chan Track) {
 	fmt.Println("Finishing insert music")
 }
 
+func (b *DBManager) FindByIds(ids []string) []Track {
+	var tracks []Track
+	var tracksObjectIds []bson.ObjectId
+
+	for _, hexId := range ids {
+		tracksObjectIds = append(tracksObjectIds, bson.ObjectIdHex(hexId))
+	}
+
+	b.trackCollection.Find(bson.M{"_id": bson.M{"$in": tracksObjectIds}}).All(&tracks)
+	return tracks
+
+}
 func (b *DBManager) InsertData(track *Track) {
 	err := b.trackCollection.Insert(track)
 	if err != nil {

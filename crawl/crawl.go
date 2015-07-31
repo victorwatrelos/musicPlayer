@@ -25,7 +25,7 @@ func (c *Crawler) isAudio(file string) bool {
 }
 
 func (c *Crawler) sendInfo(path string, info string) {
-	track := db.Track{"", "Untitled", "Untitled", "Undefined", "Untitled", path}
+	track := db.Track{"", "", "Untitled", "Untitled", "Undefined", "Untitled", path}
 	a1 := strings.Split(info, "\n")
 
 	for _, v := range a1 {
