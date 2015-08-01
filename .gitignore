@@ -24,4 +24,7 @@ _testmain.go
 *.prof
 *.swp
 
-Bonde.flac
+*.flac
+*.mp3
+*.m4a
+*.ogg
